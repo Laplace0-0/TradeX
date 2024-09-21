@@ -47,7 +47,7 @@ You can setup the backend on your system but you will have to change the links f
    cd Backend
    npm install
    npx nodemon
-
+```
 ## Usage
 - Create an account or log in with an existing account.
 - Use the search bar to find stocks and add them to your watchlist.

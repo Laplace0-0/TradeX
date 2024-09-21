@@ -126,7 +126,7 @@ function Stock() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://backend-theta-rust.vercel.app/api/quotes/${stock}`);
+        const response = await fetch(`https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/quotes/${stock}`);
         const result = await response.json();
 
         setData(result);

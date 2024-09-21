@@ -38,13 +38,13 @@ function Chart({interval}) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://backend-theta-rust.vercel.app/api/stock-price/${stock}/${interval}`);
+        const response = await fetch(`https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/stock-price/${stock}/${interval}`);
         if (!response.ok) {
           throw new Error('Failed to fetch stock price data');
         }
         const result = await response.json();
         
-        const priceResponse = await fetch(`https://backend-theta-rust.vercel.app/api/current-stock-price/${stock}`);
+        const priceResponse = await fetch(`https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/current-stock-price/${stock}`);
         if (!priceResponse.ok) {
           throw new Error('Failed to fetch current stock price');
         }

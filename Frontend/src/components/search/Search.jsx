@@ -34,7 +34,7 @@ function Search() {
         const fetchData = async () => {
             if (dat.trim() !== "") {
                 try {
-                    const response = await fetch(`https://backend-theta-rust.vercel.app/api/autoc/${dat}`, { signal });
+                    const response = await fetch(`https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/autoc/${dat}`, { signal });
                     const result = await response.json();
                     const quotes = result.quotes || [];
                     setCom(quotes);

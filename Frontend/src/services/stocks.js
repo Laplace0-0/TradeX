@@ -1,7 +1,7 @@
 
 
 export const getStocks = async(user)=>{
-    const response = await fetch("https://backend-theta-rust.vercel.app/api/user-stocks", {
+    const response = await fetch("https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/user-stocks", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -14,7 +14,7 @@ export const getStocks = async(user)=>{
 }
 
 export const getwatchStocks = async(user)=>{
-  const response = await fetch("https://backend-theta-rust.vercel.app/api/user-watchlist", {
+  const response = await fetch("https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/user-watchlist", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -27,7 +27,7 @@ return await response.json();
 }
 
 export const removestock = async(user, symbol)=>{
-  const response = await fetch("https://backend-theta-rust.vercel.app/api/remove", {
+  const response = await fetch("https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/remove", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -41,7 +41,7 @@ return await response.json();
 }
 
 export const addstock = async(user, symbol)=>{
-  const response = await fetch("https://backend-theta-rust.vercel.app/api/add", {
+  const response = await fetch("https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/add", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",

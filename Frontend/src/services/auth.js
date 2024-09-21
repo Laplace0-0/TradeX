@@ -19,7 +19,7 @@ export const getUser = async(token) => {
     if (!token) return null;
 
     try {
-        const user = await fetch(`https://backend-theta-rust.vercel.app/api/getuser/${token}`);
+        const user = await fetch(`https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/getuser/${token}`);
         return user.json()
     } catch (error) {
         return null; // Return null if token verification fails

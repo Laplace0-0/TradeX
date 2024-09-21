@@ -88,7 +88,7 @@ function Watchlist() {
               }
             });
     
-            const response = await fetch(`https://backend-theta-rust.vercel.app/api/mquotes`, {
+            const response = await fetch(`https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/mquotes`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

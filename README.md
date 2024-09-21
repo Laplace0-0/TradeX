@@ -20,6 +20,17 @@ A web-based paper trading platform that simulates stock trading using real-time 
 - **Database**: supabase
 - **Version Control**: Git, GitHub
 
+## Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/yourusername/paper-trading-website.git
+
+2. Navigate to the project directory:
+
+  
+
 ## Usage
 - Create an account or log in with an existing account.
 - Use the search bar to find stocks and add them to your watchlist.

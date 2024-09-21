@@ -43,14 +43,15 @@ You can setup the backend on your system but you will have to change the links f
 
 4.  Install the dependencies for both the backend and start the server:
 
-   
+   ```bash
+   cd Backend
+   npm install
+   npx nodemon
+
+
   
 
-## Usage
-- Create an account or log in with an existing account.
-- Use the search bar to find stocks and add them to your watchlist.
-- Start trading by selecting a stock, specifying the quantity, and clicking buy/sell.
-- Monitor your portfolio performance and view real-time charts for each stock.
+
 
 
 

@@ -29,6 +29,21 @@ A web-based paper trading platform that simulates stock trading using real-time 
 
 2. Navigate to the project directory:
 
+   ```bash
+   cd TradeX
+   
+3. Install the dependencies for both the frontend and start the server:
+
+   ```bash
+   cd Frintend
+   npm install
+   npm run dev
+
+You can setup the backend on your system but you will have to change the links for backend calling.
+
+4.  Install the dependencies for both the backend and start the server:
+
+   
   
 
 ## Usage

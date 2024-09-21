@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./search.css";
+import { Link } from "react-router-dom";
 
 function Search() {
     const [dat, setData] = useState("");
@@ -88,16 +89,16 @@ function Search() {
                         {com.length > 0 ? (
                             com.map((item, index) =>
                                 item.shortname && item.quoteType !== "OPTION" && item.quoteType !== "ETF" && item.quoteType !== "MUTUALFUND" && item.quoteType !== "CRYPTOCURRENCY" && item.quoteType !== "FUTURE" ? (
-                                    <a
+                                    <Link
                                         key={index}
-                                        href={`/stocks/${item.symbol}/5m`} // Use anchor tag for full page reload
+                                        to={`/stocks/${item.symbol}`} // Use anchor tag for full page reload
                                         onClick={(e) => {
                                             e.preventDefault(); // Prevent default anchor behavior
                                             handleLinkClick(item.symbol); // Handle click with custom logic
                                         }}
                                     >
                                         {item.shortname} ({item.symbol})
-                                    </a>
+                                    </Link>
                                 ) : null
                             )
                         ) : (

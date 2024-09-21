@@ -88,7 +88,7 @@ function Watchlist() {
               }
             });
     
-            const response = await fetch(`http://localhost:3000/api/mquotes`, {
+            const response = await fetch(`https://backend-theta-rust.vercel.app/api/mquotes`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

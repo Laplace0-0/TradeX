@@ -95,7 +95,7 @@ function Register() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/api/register", {
+      const response = await fetch("https://backend-theta-rust.vercel.app/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

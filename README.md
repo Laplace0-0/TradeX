@@ -1,4 +1,4 @@
-﻿# TradeX (https://tradex-1.vercel.app)
+﻿# TradeX https://tradex-1.vercel.app
 
 A web-based paper trading platform that simulates stock trading using real-time data from Yahoo Finance. This project allows users to create an account, manage a virtual portfolio, track profits and losses, and visualize stock prices with real-time charts from TradingView.
 

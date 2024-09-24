@@ -1,7 +1,12 @@
 
 
+<<<<<<< HEAD
 export const close = async(symbol, id, balance) =>{
     const response = await fetch(`https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/close`,{
+=======
+export const close = async(symbol, id, balance, stock_name, quantity, price, close_price, type) =>{
+    const response = await fetch(`http://localhost:3000/api/close`,{
+>>>>>>> cc64e7a (final push :)))))
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -9,14 +14,24 @@ export const close = async(symbol, id, balance) =>{
           body: JSON.stringify({
             id: id,
             symbol: symbol,
-            balance: balance
+            balance: balance,
+            stock_name: stock_name,
+            quantity: quantity,
+            price: price,
+            close_price: close_price,
+            type: type
           }),
     });
     console.log(response.json())
 }
 
+<<<<<<< HEAD
 export const buy = async(symbol, quantity, price, id, balance)=>{
         const response = await fetch(`https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/buy`,{
+=======
+export const buy = async(symbol, stock_name, quantity, price, id, balance)=>{
+        const response = await fetch(`http://localhost:3000/api/buy`,{
+>>>>>>> cc64e7a (final push :)))))
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -24,6 +39,7 @@ export const buy = async(symbol, quantity, price, id, balance)=>{
               body: JSON.stringify({
                 id: id,
                 symbol: symbol,
+                stock_name: stock_name,
                 quantity: quantity,
                 price: price,
                 balance: balance

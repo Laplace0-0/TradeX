@@ -71,7 +71,6 @@ function Watchlist() {
     // Fetch market data
     useEffect(() => {
         const fetchData = async () => {
-<<<<<<< HEAD
           if (watch.length === 0) return; // Prevent fetching if there are no watch
     
           try {
@@ -92,42 +91,20 @@ function Watchlist() {
             });
     
             if (!response.ok) {
-              throw new Error('Network response was not ok');
-=======
-            if (watch.length === 0) return;
-
-            try {
-                const symbolsObj = {};
-                watch.forEach(order => {
-                    if (order?.symbol) {
-                        symbolsObj[order.symbol] = true;
-                    }
-                });
-
-                const response = await fetch(`https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/mquotes`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(symbolsObj),
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const result = await response.json();
-                setWatchData(result);
-            } catch (error) {
-                console.error("Error fetching data:", error);
->>>>>>> cc64e7a (final push :)))))
+                throw new Error('Network response was not ok');
             }
-        };
 
-        fetchData();
-        const intervalId = setInterval(fetchData, 1000);
+            const result = await response.json();
+            setWatchData(result);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
 
-        return () => clearInterval(intervalId);
+    fetchData();
+    const intervalId = setInterval(fetchData, 1000);
+
+    return () => clearInterval(intervalId);
     }, [watch]);
 
     // Handle stock removal

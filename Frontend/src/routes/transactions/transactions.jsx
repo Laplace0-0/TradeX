@@ -52,7 +52,7 @@ const generatePDF = async () => {
     formData.append('email', user.email);
 
     // Send the Blob to backend using fetch
-    fetch('http://localhost:3000/api/send-history', {
+    fetch('https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/send-history', {
         method: 'POST',
         body: formData,
     })

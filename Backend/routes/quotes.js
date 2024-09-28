@@ -15,7 +15,7 @@ router.get('/quotes/:symbol', async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(500).send("An error occurred while fetching the quote.");
+        res.status(500).send("An error occurred while fetching the quote.")
     }
 });
 

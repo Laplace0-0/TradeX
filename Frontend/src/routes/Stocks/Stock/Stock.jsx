@@ -214,7 +214,9 @@ function Stock() {
   }
   const handleAddStock = async () => {
     try {
-        await addstock(user, data?.symbol);
+        const response = await addstock(user, data?.symbol);
+
+        console.log(response)
         // Update watch state by adding the new stock
         setWatch(prevWatch => [...prevWatch, { id: user.id, symbol: data.symbol}]); // Adjust based on your stock structure
         toast.success("Added to Watchlist!", {

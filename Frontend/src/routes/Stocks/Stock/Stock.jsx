@@ -218,7 +218,7 @@ function Stock() {
 
         console.log(response)
         // Update watch state by adding the new stock
-        setWatch(prevWatch => [...prevWatch, { id: user.id, symbol: data.symbol}]); // Adjust based on your stock structure
+        setWatch(prevWatch => [...prevWatch, { id: user.id, symbol: data?.symbol}]); // Adjust based on your stock structure
         toast.success("Added to Watchlist!", {
             position: "top-right",
             autoClose: 5000,

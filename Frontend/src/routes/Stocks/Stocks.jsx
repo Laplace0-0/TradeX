@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import './Stocks.css';
 import { useCookies } from 'react-cookie';
 import { getUser } from '../../services/auth';

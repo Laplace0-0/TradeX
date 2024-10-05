@@ -168,7 +168,7 @@ function Stocks() {
 
       <br />
       <br />
-      <h3 className='p-4 text-xl font-bold'>Portfolio</h3>
+      <h1 className='p-4 text-xl font-bold'>Portfolio</h1>
       <div className="overflow-x-auto">
         <table className="table">
           <thead>

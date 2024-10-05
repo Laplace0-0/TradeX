@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import './Stocks.css';
 import { useCookies } from 'react-cookie';
 import { getUser } from '../../services/auth';
@@ -8,74 +8,51 @@ import Navbar from "../../components/navbar/Navbar";
 import { Converter } from 'easy-currencies'; 
 import { Link } from 'react-router-dom';
 
-// Memoized StockRow to prevent unnecessary re-renders
-const StockRow = React.memo(({ order, convertedPrice, inrSymbol, index }) => (
-  <tr key={order.id}>
-    <td>{index + 1}</td>
-    <td><Link to={`/stocks/${order.stock_name}`} className='text-blue-500'>{order.stock_name}</Link></td>
-    <td>{new Date(order.created_at).toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      })}
-    </td>
-    <td className={order.type === "BUY" ? 'text-green-500' : 'text-orange-600'}>
-      {order.type}
-    </td>
-    <td>{order.quantity}</td>
-    <td>{inrSymbol}{order.stock_price}</td>
-    <td className={`pl-column ${
-      order.type === "BUY" ?
-      ((convertedPrice - order.stock_price) * order.quantity).toFixed(2) >= 0 ? 'text-green-500' : 'text-orange-600'
-    :
-      ((convertedPrice - order.stock_price) * order.quantity).toFixed(2) < 0 ? 'text-green-500' : 'text-orange-600'
-    }`}>
-      {order.type === "BUY" ? ((convertedPrice - order.stock_price) * order.quantity).toFixed(2) >= 0 ? '+' : '-'
-    :
-      ((convertedPrice - order.stock_price) * order.quantity).toFixed(2) < 0 ? '+' : '-'}{inrSymbol}{Math.abs((convertedPrice - order.stock_price) * order.quantity).toFixed(2)} ({((Math.abs((convertedPrice - order.stock_price) * order.quantity)/Math.abs(order.stock_price * order.quantity))*100).toFixed(2)}%)
-    </td>
-  </tr>
-));
-
 function Stocks() {
   const [orders, setOrders] = useState([]);
   const [user, setUser] = useState(null);
   const [cookies] = useCookies(['token']);
   const inrSymbol = getSymbolFromCurrency("INR");
-  const [marketPrices, setMarketPrices] = useState({});
+  const [marketPrices, setMarketPrices] = useState([]);
   const converter = new Converter();
-  const [totalPL, setTotalPL] = useState(0); // State for storing the total P&L
+  const [convertedPrices, setConvertedPrices] = useState({});
+  const [totalPL, setTotalPL] = useState(0);
   const [totalSpend, setTotalSpend] = useState(0);
 
-  // Memoize the converted prices to avoid unnecessary recalculations
-  const convertedPrices = useMemo(() => {
-    const prices = {};
-    let cumulativePL = 0;
-    let cumulativeSpend = 0;
+  // Fetch market prices and convert them to INR
+  useEffect(() => {
+    const convertPrices = async () => {
+      let cumulativePL = 0;
+      let cumulativeS = 0;
+      const newConvertedPrices = {};
 
-    orders.forEach((order, index) => {
-      if (marketPrices[index]) {
-        const convertedPrice = converter.convertSync(marketPrices[index].regularMarketPrice, marketPrices[index].currency, 'INR');
-        prices[index] = convertedPrice;
+      await Promise.all(marketPrices.map(async (priceData, index) => {
+        if (priceData) {
+          const priceInUSD = priceData.regularMarketPrice;
+          try {
+            const convertedPrice = await converter.convert(priceInUSD, priceData.currency, 'INR');
+            newConvertedPrices[index] = convertedPrice;
 
-        // Calculate P&L
-        let individualPL = (convertedPrice - order.stock_price) * order.quantity;
-        if (order.type === "SELL") {
-          individualPL = Math.abs(individualPL);
+            const order = orders[index];
+            let individualPL = (convertedPrice - order.stock_price) * order.quantity;
+            if (order.type === "SELL") individualPL = Math.abs(individualPL);
+            
+            cumulativePL += individualPL;
+            cumulativeS += (order.stock_price * order.quantity);
+          } catch (error) {
+            console.error(`Error converting price for index ${index}:`, error);
+            newConvertedPrices[index] = null;
+          }
         }
+      }));
 
-        cumulativePL += individualPL;
-        cumulativeSpend += (order.stock_price * order.quantity);
-      }
-    });
+      setConvertedPrices(newConvertedPrices);
+      setTotalPL(cumulativePL);
+      setTotalSpend(cumulativeS);
+    };
 
-    setTotalPL(cumulativePL);
-    setTotalSpend(cumulativeSpend);
-    return prices;
-  }, [orders, marketPrices]);
+    convertPrices();
+  }, [marketPrices, orders]);
 
   // Fetch market data for stocks
   useEffect(() => {
@@ -83,20 +60,14 @@ function Stocks() {
       if (orders.length === 0) return;
 
       try {
-        // Batch request: collect all symbols at once
-        const symbols = orders.map(order => order.stock_name).filter(Boolean);
-
+        const symbolsObj = Object.fromEntries(orders.map(order => [order.stock_name, true]));
         const response = await fetch(`https://backend-laplace0-0-laplace0-0s-projects.vercel.app/api/mquotes`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ symbols }), // Send all symbols in one batch
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(symbolsObj),
         });
 
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+        if (!response.ok) throw new Error('Network response was not ok');
 
         const result = await response.json();
         setMarketPrices(result);
@@ -106,7 +77,7 @@ function Stocks() {
     };
 
     fetchData();
-    const intervalId = setInterval(fetchData, 5000); // Throttled fetch every 5 seconds
+    const intervalId = setInterval(fetchData, 1000);
   
     return () => clearInterval(intervalId);
   }, [orders]);
@@ -129,13 +100,13 @@ function Stocks() {
 
   // Fetch user's stock orders
   useEffect(() => {
-    if (user?.id) { // Ensure user is defined and has an ID
+    if (user?.id) {
       const fetchOrders = async () => {
         try {
           const response = await getStocks(user);
           setOrders(response.length > 0 ? response : []);
         } catch (error) {
-          console.error('Error fetching orders:', error); // Log any errors
+          console.error('Error fetching orders:', error);
         }
       };
 
@@ -146,8 +117,6 @@ function Stocks() {
   return (
     <>
       <Navbar />
-      <br />
-      <br />
       <div className="flex justify-center gap-x-24">
         <div className="stats shadow border border-white w-[400px] p-4">
           <div className="stat">
@@ -160,15 +129,14 @@ function Stocks() {
           <div className="stat">
             <div className="stat-title">P&L</div>
             <div className={`stat-value ${totalPL >= 0 ? 'text-green-500' : 'text-orange-600'}`}>
-            {totalPL >= 0 ? '+' : '-'}{inrSymbol}{Math.abs(totalPL).toFixed(2)} ({totalSpend !== 0 ? ((Math.abs(totalPL) / Math.abs(totalSpend)) * 100).toFixed(2) : '0.00'}%)
+              {totalPL >= 0 ? '+' : '-'}{inrSymbol}{Math.abs(totalPL).toFixed(2)} 
+              ({totalSpend !== 0 ? ((Math.abs(totalPL) / Math.abs(totalSpend)) * 100).toFixed(2) : '0.00'}%)
             </div>
           </div>  
         </div>
       </div>
 
-      <br />
-      <br />
-      <h1 className='p-4 text-xl font-bold'>Portfolio</h1>
+      <h3 className='p-4 text-xl font-bold'>Portfolio</h3>
       <div className="overflow-x-auto">
         <table className="table">
           <thead>
@@ -189,13 +157,19 @@ function Stocks() {
               </tr>
             ) : (
               orders.map((order, index) => (
-                <StockRow 
-                  key={order.id}
-                  order={order}
-                  convertedPrice={convertedPrices[index]}
-                  inrSymbol={inrSymbol}
-                  index={index}
-                />
+                <tr key={order.id}>
+                  <td>{index + 1}</td>
+                  <td><Link to={`/stocks/${order.stock_name}`} className='text-blue-500'>{order.stock_name}</Link></td>
+                  <td>{new Date(order.created_at).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}</td>
+                  <td className={order.type === "BUY" ? 'text-green-500' : 'text-orange-600'}>
+                    {order.type}
+                  </td>
+                  <td>{order.quantity}</td>
+                  <td>{inrSymbol}{order.stock_price}</td>
+                  <td className={`pl-column ${getPLClass(order, index)}`}>
+                    {getFormattedPL(order, index)}
+                  </td>
+                </tr>
               ))
             )}
           </tbody>
@@ -203,6 +177,19 @@ function Stocks() {
       </div>
     </>
   );
+
+  function getPLClass(order, index) {
+    const plValue = (convertedPrices[index] - order.stock_price) * order.quantity;
+    return order.type === "BUY" ? (plValue >= 0 ? 'text-green-500' : 'text-orange-600') :
+                                    (plValue < 0 ? 'text-green-500' : 'text-orange-600');
+  }
+
+  function getFormattedPL(order, index) {
+    const plValue = (convertedPrices[index] - order.stock_price) * order.quantity;
+    return `${order.type === "BUY" ? (plValue >= 0 ? '+' : '-') : (plValue < 0 ? '+' : '-')} 
+           ${inrSymbol}${Math.abs(plValue).toFixed(2)} 
+           (${((Math.abs(plValue)/Math.abs(order.stock_price * order.quantity))*100).toFixed(2)}%)`;
+  }
 }
 
 export default Stocks;
